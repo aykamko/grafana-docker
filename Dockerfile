@@ -13,18 +13,4 @@ VOLUME ["/var/lib/grafana", "/var/log/grafana", "/etc/grafana"]
 
 EXPOSE 3000
 
-ENV INFLUXDB_PROTO http
-ENV INFLUXDB_HOST **ChangeMe**
-ENV INFLUXDB_PORT 8086
-ENV INFLUXDB_DASH_NAME default
-ENV INFLUXDB_NAME **ChangeMe**
-ENV INFLUXDB_USER root
-ENV INFLUXDB_PASS root
-
-ADD add_influx_db_source.sql /tmp/add_influx_db_source.sql
-ADD configure_influx_db_source.sql /tmp/configure_influx_db_source.sql
-RUN /tmp/configure_influx_db_source
-
 ENTRYPOINT ["/usr/sbin/grafana-server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini", "cfg:default.paths.data=/var/lib/grafana", "cfg:default.paths.logs=/var/log/grafana"]
-
-RUN [ -f /.influx_db_configure ] && sqlite3 /var/lib/grafana/grafana.db < /tmp/add_influx_db_source.sql
